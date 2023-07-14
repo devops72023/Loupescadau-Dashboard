@@ -1,0 +1,13 @@
+.add-user-form{
+    width: 100%;
+    justify-content: space-around;
+    gap: 20px;
+    padding: 0px 0px 40px 0px;
+}
+
+@media only screen and (max-width: 1020px) {
+    .add-user-form{
+        flex-direction: column;
+    }
+
+}

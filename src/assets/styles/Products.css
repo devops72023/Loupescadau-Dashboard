@@ -1,0 +1,16 @@
+@media only screen and (max-width: 1120px){
+    .list-holder{
+        padding: 0px;
+        overflow-y: auto;
+    }
+    .list{
+        border-radius: 0;
+    }
+    .list thead th,
+    .list td{
+        padding: 10px 7px;
+    }
+    .th-label{
+        font-size: 14px;
+    }
+}

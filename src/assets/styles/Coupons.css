@@ -1,0 +1,17 @@
+.create-coupon{
+    margin-left: auto;
+    padding: 7px 10px;
+    border-radius: 7.5px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    background: var(--blue);
+    color: var(--light);
+    transition: all .3s ease-in-out;
+}
+.create-coupon:hover{
+    background-color: var(--blueAccent);
+}
+.form-submit input{
+    margin-top: auto;
+}

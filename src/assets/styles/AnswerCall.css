@@ -1,0 +1,43 @@
+.rotate-down{
+    transform: rotate(-140deg);
+}
+.caller-img{
+    border-radius: 50%;
+    animation: box-shadow-animation 2s alternate infinite;
+}
+
+@keyframes box-shadow-animation {
+  0% {
+    box-shadow: 0px 0px 0px 61px var(--bg-color),
+                0px 0px 0px 62px var(--blue);
+  }
+  
+  50% {
+    box-shadow: 0px 0px 0px 36px var(--bg-color),
+                0px 0px 0px 39px var(--blue),
+                0px 0px 0px 61px var(--bg-color),
+                0px 0px 0px 62px var(--blue);
+  }
+  
+  100% {
+    box-shadow: 0px 0px 0px 6px var(--bg-color),
+                0px 0px 0px 6px var(--blue),
+                0px 0px 0px 36px var(--bg-color),
+                0px 0px 0px 39px var(--blue),
+                0px 0px 0px 61px var(--bg-color),
+                0px 0px 0px 62px var(--blue);
+  }
+}
+.answer-call-btn::after{
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: var(--blue);
+    animation: circleAnimation 1s linear infinite;
+}
