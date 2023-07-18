@@ -4,11 +4,9 @@ const { ObjectId } = mongoose.Schema;
 
 const CartItemSchema = new mongoose.Schema({
     product: {
-        type: ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "Product",
     },
-    title: String,
-    price: Number,
     quantity: Number,
 }, {
     timestamps: true
@@ -17,7 +15,12 @@ const CartItemSchema = new mongoose.Schema({
 const CartItem = models.CartItem || model('CartItem', CartItemSchema);
 
 const OrderSchema = new mongoose.Schema({
-    products: [CartItemSchema], // array of objects
+    products: [
+        {
+        type: Schema.Types.ObjectId,
+        ref: "CartItem",
+      }
+    ], // array of objects
     transaction_id: {type: String},
     amount: {
         type: Number
@@ -31,7 +34,7 @@ const OrderSchema = new mongoose.Schema({
     },
     updated: Date,
     user: {
-        type: ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "User"
     }
 }, {

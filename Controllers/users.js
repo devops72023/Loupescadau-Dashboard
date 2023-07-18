@@ -6,17 +6,17 @@ import { v4 as uuidv4 } from 'uuid';
 
 const qeuryAllUsers = async (req, res) => {
     try{
-      let arr = [];
-        for(let i =0; i<20; i++){
-          const user = {
-            name:  `User ${i}`,
-            email: `user${i}@gmail.com`,
-            salt:'ff3973ec-28b4-4046-9564-91c925646b04',
-            hashed_password: '97267c103e95b99d89e828ad53d02814ba44e317'
-          };
-          arr.push(new User(user))
-        }
-        console.log(arr)
+        // let arr = [];
+        // for(let i =0; i<20; i++){
+        //   const user = {
+        //     name:  `User ${i}`,
+        //     email: `user${i}@gmail.com`,
+        //     salt:'ff3973ec-28b4-4046-9564-91c925646b04',
+        //     hashed_password: '97267c103e95b99d89e828ad53d02814ba44e317'
+        //   };
+        //   arr.push(new User(user))
+        // }
+        // console.log(arr)
         const users = await User.find();
         res.status(200).json(users);
     }catch(err){
@@ -99,6 +99,25 @@ const updateCurrentUser = async (req, res) => {
   }
 };
 
+async function updatePassword(req, res){
+  try {
+    let user = await User.findOne({_id : req.profile._id });
+    const cpwd = user.encryptPassword(req.body.cpwd);
+    if (cpwd == user.hashed_password) {
+      if(req.body.npwd == req.body.rpwd){
+        await user.updatePassword(req.body.npwd) // update
+        res.status(200).json({success: "Password updated successfully"});
+      }else{
+        return res.status(400).json({'unmatch_password': true})
+      }
+    }else{
+      return res.status(400).json({'incorrect_password': true})
+    }
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+}
+
 const create = async (req, res) => {
   try {
     let newUser = { 
@@ -112,7 +131,7 @@ const create = async (req, res) => {
     }
 
     const user = await new User(newUser);
-    user.password = "secret" // new Date.now();
+    user.password = Math.random().toString(36).slice(-8); // new Date.now();
 
     await user.save();
     res.status(200).json({message: "new user created successfully"})
@@ -142,4 +161,15 @@ async function deleteUser(req, res) {
   }
 }
 
-export { qeuryAllUsers, findUserById, read, update, create, deleteUser, updateCurrentUser }
+async function deleteMultiple(req, res){
+  try {
+    let users = req.body;
+    await User.deleteMany({ _id: { $in: users }})
+    users = await User.find()
+    return res.status(200).json({success: 'Usere deleted successfully', users: users})
+  } catch (error) {
+    res.status(400).json({error: error.message})
+  }
+}
+
+export { qeuryAllUsers, findUserById, read, update, create, deleteUser, updateCurrentUser, updatePassword, deleteMultiple }

@@ -316,7 +316,16 @@ const decreaseProductQuantity = (req, res, next) => {
     console.log(error);
   }
 };
-
+async function deleteMultiple(req, res){
+  try {
+    let products = req.body;
+    await Product.deleteMany({ _id: { $in: products }})
+    products = await Product.find()
+    return res.status(200).json({success: 'Products deleted successfully', products: products})
+  } catch (error) {
+    res.status(400).json({error: error.message})
+  }
+}
 
 export {
   create,
@@ -324,10 +333,5 @@ export {
   update,
   read,
   list,
-  getPhoto,
-  listSearch,
-  listBySearch,
-  listRelated,
-  listCategories,
   findProductById,
-  removeAllProducts}
+  deleteMultiple}

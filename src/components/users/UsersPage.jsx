@@ -80,7 +80,7 @@ const Row = (props) => {
         <tr>
             <td><input type="checkbox" name="one" id="one" value={props._id} checked={ checked ? 'checked' : '' } onChange={handleChange}/></td>
             <td><img src={ `${import.meta.env.VITE_ASSETS}Profile-pictures/${ props.image }` } alt={ props.image } /></td>
-            <td>{ props.name }</td>
+            <td className='one-line'>{ props.name }</td>
             <td className='one-line'>{ props.email }</td>
             <td className='one-line'>{ props.about }</td>
             <td>{ props.role == 1 ? "Admin" : "User" }</td>
@@ -102,7 +102,7 @@ const Row = (props) => {
 }
 
 export default function UsersPage(props){
-    const { setPageName, setActiveItem, navState } = useContext(AppContext)
+    const { setPageName, setActiveItem, navState, currentUser } = useContext(AppContext)
     const [users, setUsers] = useState([])
     const [ checkAll, setCheckAll ] = useState(false)
     const [ checkedIds, setCheckedIds ] = useState([])
@@ -110,7 +110,48 @@ export default function UsersPage(props){
     function handleCheckAll (event) {
         setCheckAll(event.target.checked);
     }    
-    
+    const deleteMany = async () => {
+        let endpoint = `${import.meta.env.VITE_API_URL}users/${currentUser._id}/multiple`
+        let toastId = toast.dark(<SpinningToast />, { autoClose: false, hideProgressBar: true, theme: 'light' });
+        fetch(endpoint,
+            {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+                },
+                body: JSON.stringify(checkedIds)
+            }
+        )
+        .then(res => res.json())
+        .then(res => {
+            setUsers(res.users);
+            toast.update(toastId, {
+                render: 'Les utilisateurs ont été suprimés avec succès!',
+                type: 'success',
+                theme: 'light',
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 3000, // Close the alert after 3 seconds
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        })
+        .catch(err => {
+            toast.update(toastId, {
+                render: err.error,
+                type: 'error',
+                theme: 'light',
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 3000, // Close the alert after 3 seconds
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        });
+    }
     useEffect(()=>{
         setPageName("Users")
         setActiveItem("users");
@@ -157,7 +198,7 @@ export default function UsersPage(props){
                                     <tr>
                                         <th className='flex gap th-trash'>
                                             <input type="checkbox" name="all" id="all" onChange={handleCheckAll}/>
-                                            <TrashIcon />
+                                            <TrashIcon onClick={deleteMany} />
                                         </th>
                                         <th>
                                             <div className="th-label">Image</div>

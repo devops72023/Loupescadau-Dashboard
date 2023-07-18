@@ -90,10 +90,10 @@ const Row = (props) => {
         <tr>
             <td><input type="checkbox" name="one" id="one" checked={ checked ? 'checked' : '' } onChange={handleChange} /></td>
             <td><img src={ `${import.meta.env.VITE_ASSETS}Products-images/${ props.photo }` } alt="" /></td>
-            <td>{ props.title }</td>
+            <td className='one-line'>{ props.title }</td>
             <td className='one-line'>{ props.description }</td>
             <td>{ props.price }</td>
-            <td>{ props.category.name }</td>
+            <td className='one-line'>{ props.category.name }</td>
             <td>{ props.quantity }</td>
             <td>{ props.sold }</td>
             <td className='actions'>
@@ -113,7 +113,7 @@ const Row = (props) => {
 }
 
 export default function Products(props){
-    const { setPageName, setActiveItem, navState } = useContext(AppContext)
+    const { setPageName, setActiveItem, navState, currentUser } = useContext(AppContext)
     const [isMounted, setIsMounted] = useState(false);
     const [ products, setProducts ] = useState([]);
     const [ checkAll, setCheckAll ] = useState(false)
@@ -122,7 +122,48 @@ export default function Products(props){
     function handleCheckAll (event) {
         setCheckAll(event.target.checked);
     }   
-    
+    const deleteMany = async () => {
+        let endpoint = `${import.meta.env.VITE_API_URL}products/${currentUser._id}/multiple`
+        let toastId = toast.dark(<SpinningToast />, { autoClose: false, hideProgressBar: true, theme: 'light' });
+        fetch(endpoint,
+            {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+                },
+                body: JSON.stringify(checkedIds)
+            }
+        )
+        .then(res => res.json())
+        .then(res => {
+            setProducts(res.products);
+            toast.update(toastId, {
+                render: 'Les produits ont été suprimés avec succès!',
+                type: 'success',
+                theme: 'light',
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 3000, // Close the alert after 3 seconds
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        })
+        .catch(err => {
+            toast.update(toastId, {
+                render: err.error,
+                type: 'error',
+                theme: 'light',
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 3000, // Close the alert after 3 seconds
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        });
+    }
     useEffect(()=>{
         setIsMounted(true);
         setPageName("Products")
@@ -171,7 +212,7 @@ export default function Products(props){
                                     <tr>
                                         <th className='flex gap th-trash'>
                                             <input type="checkbox" name="all" id="all"  onChange={handleCheckAll} />
-                                            <TrashIcon />
+                                            <TrashIcon onClick={deleteMany} />
                                         </th>
                                         <th><div className="th-label">image</div></th>
                                         <th><div className="th-label">Titre</div></th>
@@ -179,7 +220,7 @@ export default function Products(props){
                                         <th><div className="th-label">Prix</div></th>
                                         <th><div className="th-label">Categorie</div></th>
                                         <th><div className="th-label">Quantité</div></th>
-                                        <th><div className="th-label">Solde</div></th>
+                                        <th><div className="th-label">Vendu</div></th>
                                         <th className='actions'><div className="th-label">Actions</div></th>
                                     </tr>
                                 </thead>

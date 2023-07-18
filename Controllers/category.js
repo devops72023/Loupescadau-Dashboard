@@ -114,6 +114,15 @@ const remove = async (req, res) => {
       });
     }
 };
+async function deleteMultiple(req, res){
+  try {
+    let cat = req.body;
+    await Category.deleteMany({ _id: { $in: cat }})
+    cat = await Category.find()
+    return res.status(200).json({success: 'Categories deleted successfully', cat: cat})
+  } catch (error) {
+    res.status(400).json({error: error.message})
+  }
+}
 
-
-export {create, read, list, update, remove, findCategoryById}
+export { create, read, list, update, remove, findCategoryById, deleteMultiple }

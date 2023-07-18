@@ -1,12 +1,12 @@
 import { useContext, useEffect, useRef, useState } from "react"
 import { AppContext } from "../../App"
 import { EditIcon } from "../global/Icons"
-import { toast } from "react-toastify"
-import SpinningToast from "../global/SpinningToast"
 import ChangeInfos from "./ChangeInfos"
+import ChangePassword from "./ChangePassword"
 
 export default function Profile(){
-    const { setPageName, navState, currentUser, setCurrentUser } = useContext(AppContext)
+    const { setPageName, navState, currentUser } = useContext(AppContext)
+    const [ passwordSection, setPasswordSection ] = useState(false)
     const [ file, setFile ] = useState(null)
     const fileRef = useRef()
     const imgRef = useRef()
@@ -25,9 +25,6 @@ export default function Profile(){
 
     useEffect(() => {
         setPageName("Mon Compt")
-        setName(currentUser.name)
-        setEmail(currentUser.email)
-        setAbout(currentUser.about)
     }, [currentUser])
 
     return (
@@ -51,10 +48,18 @@ export default function Profile(){
                         <h1 className="text-xl font-bold">{ currentUser.name }</h1>
                         <h4>{ currentUser.email }</h4>
                     </div>
-                    <button className="w-full border-solid border-colors-blueAccent border-[1px] px-5 py-3 rounded-md text-colors-blueAccent transition-all whitespace-nowrap hover:bg-colors-blueAccent hover:text-colors-light">Changer le mot de passe</button>
+                    <button onClick={()=>{setPasswordSection(prv => !prv)}} className="w-full border-solid border-colors-blueAccent border-[1px] px-5 py-3 rounded-md text-colors-blueAccent transition-all whitespace-nowrap text-[12px] hover:bg-colors-blueAccent hover:text-colors-light ">{
+                        passwordSection
+                        ? 'Modifier les informations'
+                        : 'Changer le mot de passe'
+                    }</button>
                 </div>
 
-                <ChangeInfos />
+                {
+                    passwordSection 
+                    ? <ChangePassword />
+                    : <ChangeInfos file={file} />
+                }
             </div>
         </div>
     )

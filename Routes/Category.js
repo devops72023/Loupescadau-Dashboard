@@ -1,6 +1,6 @@
 
 import { Router } from 'express';
-import {create, read, list, update, remove, findCategoryById} from '../Controllers/category.js';
+import { create, read, list, update, remove, findCategoryById, deleteMultiple } from '../Controllers/category.js';
 import {findUserById} from '../Controllers/users.js';
 import {requireSignIn, isAuth, isAdmin} from '../Controllers/auth.js';
 import { multerCategory } from '../Controllers/multer-config.js';
@@ -12,6 +12,7 @@ categoryRouter.get('/', list);
 categoryRouter.post('/', requireSignIn, isAuth, isAdmin, multerCategory.single('image'), create);
 categoryRouter.put('/:categoryId', requireSignIn, isAuth, isAdmin, multerCategory.single('image'), update);
 categoryRouter.delete('/:categoryId', requireSignIn, isAuth, isAdmin, remove);
+categoryRouter.delete('/:userId/multiple', requireSignIn, isAuth, isAdmin, deleteMultiple);
 
 categoryRouter.param('categoryId', findCategoryById);
 categoryRouter.param('userId', findUserById);

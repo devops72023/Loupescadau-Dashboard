@@ -4,10 +4,76 @@ import { Link } from 'react-router-dom'
 import SpinningToast from '../global/SpinningToast';
 import { toast } from 'react-toastify';
 import { CancelIcon, ConfirmIcon, OrdersIcon, ProductsIcon, TrashIcon } from '../global/Icons';
+import { Select, SelectItem } from '@tremor/react';
+
+const Status = ({ current, orderId }) => {
+    const [ state, setState ] = useState(current);
+    const statusList = ["Not processed", "Shipped", "Delivered", "Cancelled"]
+
+    const handleChange = (selected) =>{
+        setState(selected);
+        let toastId = toast.dark(<SpinningToast />, { autoClose: false, hideProgressBar: true, theme: 'light' });
+        fetch(`${ import.meta.env.VITE_API_URL }orders/${orderId}/update-status`,{
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt'),
+            },
+            body: JSON.stringify({status: selected})
+        })
+        .then(res => res.json())
+        .then(res => {
+            console.log(res);
+            if(!res.error){
+                toast.update(toastId, {
+                    render: 'Le status de la commande été changé avec succès!',
+                    type: 'success',
+                    theme: 'light',
+                    position: toast.POSITION.TOP_RIGHT,
+                    autoClose: 3000, // Close the alert after 3 seconds
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            toast.update(toastId, {
+                render: err.error,
+                type: 'error',
+                theme: 'light',
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 3000, // Close the alert after 3 seconds
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        })
+    }
+
+    return (
+        <div className="flex">
+            <Select
+                className="w-auto"
+                value={state}
+                onChange={handleChange}
+                placeholder="choisir le mois"
+                >
+                { statusList
+                    .map((status, index) => 
+                            (<SelectItem key={index} value={status} >{status}</SelectItem>))}
+            </Select>
+        </div>
+    )
+}
 
 const Row = (props) => {
     const [ checked, setChecked ] = useState(false);
     const [ trashClicked, setTrashClicked ] = useState(false);
+    console.log(props.products)
 
     function handleChange(e){
         setChecked(!checked);
@@ -20,7 +86,7 @@ const Row = (props) => {
     }
     function confirmDeletion(){
         let toastId = toast.dark(<SpinningToast />, { autoClose: false, hideProgressBar: true, theme: 'light' });
-        fetch(`${ import.meta.env.VITE_API_URL }products/${props._id}`,{
+        fetch(`${ import.meta.env.VITE_API_URL }orders/${props._id}`,{
             method: 'DELETE',
             headers: {
                 Authorization: 'Bearer ' + localStorage.getItem('jwt'),
@@ -30,9 +96,9 @@ const Row = (props) => {
         .then(res => {
             console.log(res);
             if(!res.error){
-                props.setOrders(res.products);
+                props.setOrders(res.orders);
                 toast.update(toastId, {
-                    render: 'Le produit été suprimé avec succès!',
+                    render: 'La commande été suprimé avec succès!',
                     type: 'success',
                     theme: 'light',
                     position: toast.POSITION.TOP_RIGHT,
@@ -78,10 +144,13 @@ const Row = (props) => {
     return (
         <tr>
             <td><input type="checkbox" name="one" id="one" checked={ checked ? 'checked' : '' } onChange={handleChange} /></td>
-            <td>{ props.user.name }</td>
-            <td>{ props.products }</td>
+            <td>{ props.user?.name }</td>
+            <td className='one-line'>{ props.products?.map(item=>{
+                const product = item.product
+                return product.title + "; "
+            }) }</td>
             <td>{ props.amount }</td>
-            <td>{ props.status }</td>
+            <td><Status current={ props.status } orderId={props._id} /></td>
             <td className='actions'>
                 <div className="action-links">
                     {
@@ -115,6 +184,7 @@ export default function Orders (){
         .then(async res => {
             if (res.status === 200){
                 const response = await res.json();
+                console.log(response);
                 setOrders(response);
             }
         })
@@ -134,7 +204,7 @@ export default function Orders (){
                     </div>
                     <div className="fieldset-main">
                         <div className="fieldset-main-header">
-                            <h2 className='font-bold text-light text-2xl'>Les ordres: </h2>
+                            <h2 className='font-bold text-colors-light text-2xl'>Les ordres: </h2>
                         </div>
                         <div className="list-holder">
                             <table className="list ">

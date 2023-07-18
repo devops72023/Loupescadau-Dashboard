@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-const { model, models } = mongoose;
+const { model, models, Schema } = mongoose;
 import CryptoJS from "crypto-js";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -26,14 +26,22 @@ const userSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
+    phone: {
+        type: String,
+        trim: true
+    },
+    location: {
+        type: String,
+        trim: true
+    },
     salt: String,
     role: {
         type: Number,
         default: 0
     },
     history: {
-        type: Array,
-        default: []   
+        type: [{ type: Schema.Types.ObjectId, ref: 'Order' }],
+        default: [],
     },
     image: {
         type: String,
@@ -57,6 +65,13 @@ userSchema.virtual('password')
     });
 
 userSchema.methods = {
+    updatePassword: async function(newPassword) {
+        this.password = newPassword; // Set the new password
+        
+        // Save the updated user with the new password
+        await this.save();
+        return this.password;
+    },
     encryptPassword: function(password) {
         if(!password) {
             return '';

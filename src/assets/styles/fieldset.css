@@ -1,6 +1,5 @@
 .fieldset{
     width: 100%;
-    overflow: hidden;
     border-radius: 15px;
     filter: drop-shadow(0px 15px 30px rgba(0, 0, 0, 0.1))
             drop-shadow(0px 7px 15px  rgba(0, 0, 0, 0.1));
@@ -96,6 +95,8 @@
 }
 .list-holder{
     width: 100%;
+    overflow: hidden;
+    overflow-x: auto;
     /* padding: 0px 20px 20px 20px; */
 }
 .list-holder::-webkit-scrollbar{
@@ -106,7 +107,6 @@ table {
   border-collapse: collapse;
   background-color: var(--light);
   border-radius: 7.5px;
-  overflow: hidden;
   box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.1);
 }
 table input[type="checkbox"]{

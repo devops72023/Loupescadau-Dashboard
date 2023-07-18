@@ -45,7 +45,6 @@ const Navigation = (props) => {
                     onClick={menuBtnClick}>
                         <span></span>
                 </button>
-                <audio src={callRing} autoPlay class=""></audio> 
                 <Link to='/' className="header-logo">
                     <img src={ logo } alt="Louoescadau log" />
                 </Link>

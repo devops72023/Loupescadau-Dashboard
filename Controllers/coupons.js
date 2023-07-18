@@ -89,5 +89,15 @@ const remove = async (req, res) => {
                             
     }
 }
+async function deleteMultiple(req, res){
+    try {
+      let coupons = req.body;
+      await Coupon.deleteMany({ _id: { $in: coupons }})
+      coupons = await Coupon.find()
+      return res.status(200).json({success: 'Coupons deleted successfully', coupons: coupons})
+    } catch (error) {
+      res.status(400).json({error: error.message})
+    }
+  }
 
-export { read, create, findCouponById, list, update, remove }
+export { read, create, findCouponById, list, update, remove, deleteMultiple }

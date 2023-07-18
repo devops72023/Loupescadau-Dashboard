@@ -61,6 +61,7 @@ const Row = (props) => {
             });
         })
     }
+    
     useMemo(()=>setChecked(props.checked), [props.checked])
     useEffect(() => {
         if(checked){
@@ -101,7 +102,7 @@ const Row = (props) => {
 }
 
 export default function Coupons(props){
-    const { setPageName, setActiveItem, navState } = useContext(AppContext)
+    const { setPageName, setActiveItem, navState, currentUser } = useContext(AppContext)
     const [isMounted, setIsMounted] = useState(false);
     const [coupons, setCoupons] = useState([])
     const [ checkAll, setCheckAll ] = useState(false)
@@ -110,6 +111,49 @@ export default function Coupons(props){
     function handleCheckAll (event) {
         setCheckAll(event.target.checked);
     }    
+
+    const deleteMany = async () => {
+        let endpoint = `${import.meta.env.VITE_API_URL}coupons/${currentUser._id}/multiple`
+        let toastId = toast.dark(<SpinningToast />, { autoClose: false, hideProgressBar: true, theme: 'light' });
+        fetch(endpoint,
+            {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+                },
+                body: JSON.stringify(checkedIds)
+            }
+        )
+        .then(res => res.json())
+        .then(res => {
+            setCoupons(res.coupons);
+            toast.update(toastId, {
+                render: 'Les utilisateurs ont été suprimés avec succès!',
+                type: 'success',
+                theme: 'light',
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 3000, // Close the alert after 3 seconds
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        })
+        .catch(err => {
+            toast.update(toastId, {
+                render: err.error,
+                type: 'error',
+                theme: 'light',
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 3000, // Close the alert after 3 seconds
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        });
+    }
     
     useEffect(()=>{
         setIsMounted(true);
@@ -168,7 +212,7 @@ export default function Coupons(props){
                                     <tr>
                                         <th className='flex gap th-trash'>
                                             <input type="checkbox" name="all" id="all" onChange={handleCheckAll}/>
-                                            <TrashIcon />
+                                            <TrashIcon onClick={deleteMany} />
                                         </th>
                                         <th><div className="th-label">Label</div></th>
                                         <th><div className="th-label">Code</div></th>
