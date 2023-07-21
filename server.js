@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import http from 'http';
 import { Server } from 'socket.io';
 import { config } from 'dotenv';
+import UsersModel  from './Models/user.js';
 import { createProxyMiddleware } from 'http-proxy-middleware'
 config();
 
@@ -39,32 +40,31 @@ const io = new Server(
 io.on("connection", socket => {
   
   console.log('User Connected :' + socket.id);
-  socket.emit('connection-success', {
-    status: "connection-success",
-    socketId: socket.id
+  socket.on('connection-success', async ({adminId})=>{
+    console.log('Admin Connected :' + adminId);
+    await UsersModel.findOneAndUpdate({ _id: adminId }, { $set: { socket: socket.id } }, { new: true })
   })
 
-  socket.on('sdp' , sdp => {
-      // console.log(sdp)
-      socket.broadcast.emit('sdp' , sdp);
+  // {
+  //   from: Contain the socketID for the sender
+  //   to: Contain the socketID for the receiver
+  //   sdp: The session description for webrtc connection
+  // }
+
+  socket.on('sdp' , ({from, to, sdp}) => {
+      console.log('Sdp from :' + from + ' to :' + to + ' sdp : ' + sdp)
+      socket.to(to).emit('sdp' , {from, sdp});
   });
 
-  socket.on('candidate', candidate => {
-      console.log(" outside candidate", candidate);
-      socket.broadcast.emit('candidate',candidate);
+  socket.on('candidate', ({from, to, candidate}) => {
+      // console.log(" outside candidate", candidate);
+      console.log('Candidate from :' + from + ' to :' + to + ' candidate :', candidate)
+      socket.to(to).emit('candidate', {from, candidate});
   })
 
-  socket.on('join-room', data => {
-      socket.join(data);
-      console.log('User with ID : ', socket.id ,' joined room: ',data );
-  });
-
-  socket.on('send-message', data => {
-      socket.to(data.room).emit('recieved-message', data);
-  })
-
-  socket.on("disconnect", () => {
+  socket.on("disconnect", async () => {
       console.log(" disconnected socket " + socket.id);
+      await UsersModel.findOneAndUpdate({ socket: socket.id }, { $set: { socket: '' } }, { new: true })
   });
 
 });

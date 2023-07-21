@@ -5,7 +5,7 @@ import '../../assets/styles/video_call.css'
 import { AppContext } from "../../App"
 
 const VideoCall = ()=>{
-    const { callExist, isAnswered, socketObj, socketId, sdpObj } = useContext(AppContext)
+    const { callExist, isAnswered, currentUser, socketObj, socketId, sdpObj, from } = useContext(AppContext)
     const [ isFullScreen, setIsFullScreen] = useState(false)
     const videoHolder = useRef()
     const localStream = useRef()
@@ -50,12 +50,10 @@ const VideoCall = ()=>{
       })
     }
     useEffect(()=>{
-      console.log('sdp object : ', sdpObj)
-      
-      socketObj.on('candidate' , (candidate) => {
-        console.log('outside :', candidate)
+      socketObj.on('candidate' , ({from, candidate}) => {
         try {
             pc.current.addIceCandidate(new RTCIceCandidate(candidate));
+            console.log('candidate added')
         } catch(error) {
             console.log(error.message);
         }
@@ -78,12 +76,19 @@ const VideoCall = ()=>{
       catch(err){
         console.log(err)
       }
+      var configuration = {
+        iceServers: [
+          { urls: 'stun:stun.l.google.com:19302' }, // Add your STUN server here
+          // You can add more STUN or TURN servers if needed
+        ]
+      };
 
-      const _pc = new RTCPeerConnection(null);
+      const _pc = new RTCPeerConnection(configuration);
       _pc.onicecandidate = (e) => {
         console.log(e.candidate)
           if (e.candidate){
-            sendToPeer('candidate', e.candidate)
+            console.log(e.candidate);
+            sendToPeer('candidate', {from: currentUser._id, to: from, candidate: e.candidate})
           }
       }
 
@@ -97,9 +102,20 @@ const VideoCall = ()=>{
       }
 
       pc.current = _pc;
+      
 
       try {
         pc.current.setRemoteDescription(new RTCSessionDescription(sdpObj));
+        console.log("the remote sdp is set correctly")
+        if ( callExist && isAnswered ){
+          pc.current.createAnswer({
+            offerToReceiveAudio: 1,
+            offerToReceiveVideo: 1,
+          }).then(sdp => {
+            console.log(sdp)
+            prcessSDP(sdp)
+          }).catch(err => console.log(err))
+        }
       } catch(error) {
         console.log(error.message);
       }
@@ -109,23 +125,17 @@ const VideoCall = ()=>{
       }
       
       const prcessSDP = (sdp) => {
-        pc.current.setLocalDescription(sdp)
-        // Sending the sdp to the server
-        sendToPeer('sdp', sdp);
+        try{
+          console.log(pc.current)
+          pc.current.setLocalDescription(sdp);
+        }catch(error){
+          console.log(error.message)
+        }
+        sendToPeer('sdp', {from: currentUser._id, to: from, sdp: sdp});
       }
-      const createAnswer = ()=>{
-        pc.current.createAnswer({
-          offerToReceiveAudio: 1,
-          offerToReceiveVideo: 1,
-        }).then(sdp => {
-          console.log(sdp)
-          prcessSDP(sdp)
-        }).catch(err => console.log(err))
-      }
-
-      createAnswer()
       
-    }, [])
+      
+    }, [isAnswered])
     return (
         <div 
             ref={videoHolder}

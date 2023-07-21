@@ -25,31 +25,22 @@ import 'react-toastify/dist/ReactToastify.css';
 import Profile from './components/Profile/Profile';
 import Orders from './components/Orders/Orders';
 
-// const manager = new Manager(import.meta.env.SOCKET_SERVER)
+const manager = new Manager(import.meta.env.VITE_SOCKET_SERVER)
 const AppContext = createContext();
 
 const AppProvider = (props) => {
-  // const socket = manager.socket('/')
-  // manager.open((err) => {
-  //   if (err) {
-  //     // an error has occurred
-  //     console.log(err);
-  //   } else {
-  //     // the connection was successfully established
-  //     console.log('connection established');
-  //     console.log(socket)
-  //   }
-  // });
-  const [pageName, setPageName] = useState('Dashboard');
-  const [navState, setNavState] = useState(false);
-  const [activeItem, setActiveItem] = useState('dashboard');
-  const [currentUser, setCurrentUser] = useState({});
-  const [isLoggedIn, setIsLoggedIn] = useState(props.isLoggedIn);
+  const socket = manager.socket('/')
+  const [ pageName, setPageName ] = useState('Dashboard');
+  const [ navState, setNavState ] = useState(false);
+  const [ activeItem, setActiveItem ] = useState('dashboard');
+  const [ isLoggedIn, setIsLoggedIn ] = useState(props.isLoggedIn);
   const [ callExist, setCallExist ] = useState(false)
   const [ isAnswered, setIsAnswered ] = useState(false)
   const [ socketId, setSocketId ] = useState('')
   const [ socketObj, setSocketObj ] = useState('')
   const [ sdpObj, setSdpObj ] = useState('')
+  const [ sdpAnswer, setSdpAnswer ] = useState('')
+  const [ from, setFrom ] = useState({});
 
   const state = {
     pageName: pageName,
@@ -60,8 +51,8 @@ const AppProvider = (props) => {
     setActiveItem: setActiveItem,
     isLoggedIn: isLoggedIn,
     setIsLoggedIn: setIsLoggedIn,
-    currentUser: currentUser,
-    setCurrentUser: setCurrentUser,
+    currentUser: props.currentUser,
+    setCurrentUser: props.setCurrentUser,
     setSettingChanged: props.setSettingChanged,
     callExist: callExist,
     setCallExist: setCallExist,
@@ -73,23 +64,24 @@ const AppProvider = (props) => {
     setSocketObj: setSocketObj,
     sdpObj: sdpObj,
     setSdpObj: setSdpObj,
+    sdpAnswer: sdpAnswer,
+    setSdpAnswer: setSdpAnswer,
+    from: from,
+    setFrom: setFrom,
     settings: props.settings,
     setSettings: props.setSettings
   }
 
   useEffect(() => {
-    // setSocketObj(socket)
-    // socket.on('connection-success', socket => {
-    //   console.log(socket.socketId)
-    //   setSocketId(socketId)
-    // })
-    // socket.on('sdp' , async (sdp) => {
-    //   console.log(sdp);
-    //   if(sdp.type === 'offer'){
-    //     setCallExist(true);
-    //     setSdpObj(sdp)
-    //   }
-    // });
+    setSocketObj(socket)
+    socket.emit('connection-success', {adminId: props.currentUser._id})
+    socket.on('sdp' , async ({from, sdp}) => {
+      if(sdp.type === 'offer'){
+        setCallExist(true);
+        setFrom(from)
+        setSdpObj(sdp)
+      }
+    });
   }, [sdpObj]);
   
 
@@ -103,10 +95,11 @@ const AppProvider = (props) => {
 
 function App() {
 
-  const [loaded, setLoaded] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [ loaded, setLoaded ] = useState(false);
+  const [ isLoggedIn, setIsLoggedIn ] = useState(false)
   const [ settingChanged, setSettingChanged ] = useState('');
   const [ settings, setSettings ] = useState();
+  const [ currentUser, setCurrentUser ] = useState({});
 
   async function checkAuth(){
 
@@ -117,6 +110,7 @@ function App() {
     .then(res => res.json())
     .then(res => {
         if (res._id !== undefined) {
+          setCurrentUser(res)
           setIsLoggedIn(true);
           setLoaded(true);
         }else{
@@ -152,7 +146,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <AppProvider isLoggedIn={isLoggedIn} setSettingChanged={setSettingChanged} settings={settings} setSettings={setSettings} >
+      <AppProvider {...{ isLoggedIn, setSettingChanged, settings, setSettings, currentUser, setCurrentUser }} >
         {/* this header and the side navigation bar */}
 
           <ToastContainer />
