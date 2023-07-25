@@ -36,10 +36,7 @@ const AppProvider = (props) => {
   const [ isLoggedIn, setIsLoggedIn ] = useState(props.isLoggedIn);
   const [ callExist, setCallExist ] = useState(false)
   const [ isAnswered, setIsAnswered ] = useState(false)
-  const [ socketId, setSocketId ] = useState('')
   const [ socketObj, setSocketObj ] = useState('')
-  const [ sdpObj, setSdpObj ] = useState('')
-  const [ sdpAnswer, setSdpAnswer ] = useState('')
   const [ from, setFrom ] = useState({});
 
   const state = {
@@ -58,14 +55,8 @@ const AppProvider = (props) => {
     setCallExist: setCallExist,
     isAnswered: isAnswered,
     setIsAnswered: setIsAnswered,
-    socketId: socketId,
-    setSocketId: setSocketId,
     socketObj: socketObj,
     setSocketObj: setSocketObj,
-    sdpObj: sdpObj,
-    setSdpObj: setSdpObj,
-    sdpAnswer: sdpAnswer,
-    setSdpAnswer: setSdpAnswer,
     from: from,
     setFrom: setFrom,
     settings: props.settings,
@@ -75,14 +66,11 @@ const AppProvider = (props) => {
   useEffect(() => {
     setSocketObj(socket)
     socket.emit('connection-success', {adminId: props.currentUser._id})
-    socket.on('sdp' , async ({from, sdp}) => {
-      if(sdp.type === 'offer'){
-        setCallExist(true);
-        setFrom(from)
-        setSdpObj(sdp)
-      }
+    socket.on('call' , ({from}) => {
+      setCallExist(true);
+      setFrom(from)
     });
-  }, [sdpObj]);
+  }, []);
   
 
   return (

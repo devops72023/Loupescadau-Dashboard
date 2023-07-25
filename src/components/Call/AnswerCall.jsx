@@ -7,17 +7,20 @@ import '/src/assets/styles/AnswerCall.css';
 
 
 export default function AnswerCall(){
-    const { navState, currentUser, callExist, isAnswered, setIsAnswered } = useContext(AppContext)
+    const { navState, currentUser, callExist, setCallExist, isAnswered, setIsAnswered, socketObj, from } = useContext(AppContext)
     
     function acceptCall(){
         if(callExist && !isAnswered){
             setIsAnswered(true)
+            socketObj.emit('call-answer', {from: currentUser._id, to: from, answer: "accepted"})
         }
     }
-
-    useEffect(()=>{
-        
-    }, []);
+    function denyCall(){
+        if(callExist && !isAnswered){
+            setCallExist(false)
+            socketObj.emit('call-answer', {from: currentUser._id, to: from, answer: "not_accepted"})
+        }
+    }
 
     return (
         <div className={`app-container ${navState ? ' app-shrink' : ''}`}>
@@ -34,16 +37,17 @@ export default function AnswerCall(){
                 </h2>
                 <div className="flex gap-10">
                     <button 
-                        className=" text-red-800 flex gap-5 align-center rounded-xl px-7 py-3 transition-all hover:bg-red-800 hover:text-light group">
-                        <PhoneIcon className="fill-red-800 stroke-red-800 rotate-down group-hover:fill-light group-hover:stroke-light" />
+                        onClick={denyCall}
+                        className=" text-red-800 flex gap-5 align-center rounded-xl px-7 py-3 transition-all hover:bg-red-800 hover:text-colors-light group">
+                        <PhoneIcon className="fill-red-800 stroke-red-800 rotate-down group-hover:fill-colors-light group-hover:stroke-colors-light" />
                         <div>
                             Refuse
                         </div>
-                    </button>
+                    </button> 
                     <button 
                         onClick={acceptCall}
-                        className="answer-call-btn relative bg-blueAccent text-light  flex gap-5 align-center rounded-xl px-7 py-3 transition-all hover:bg-blue ">
-                        <PhoneIcon className="answer-call-icon fill-light stroke-light rotate-90" />
+                        className="answer-call-btn relative bg-colors-blueAccent text-colors-light  flex gap-5 align-center rounded-xl px-7 py-3 transition-all hover:bg-colors-blue ">
+                        <PhoneIcon className="answer-call-icon fill-colors-light stroke-colors-light rotate-90" />
                         <div>
                             Answer
                         </div>

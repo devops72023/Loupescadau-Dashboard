@@ -52,7 +52,7 @@ const Navigation = (props) => {
                     <span className='circle'></span>
                     { pageName }
                 </h3>
-                <div className={`call-button ${ callExist ? 'call-exist' : ''}`}>
+                <div className={`call-button ${ callExist && !isAnswered ? 'call-exist' : ''}`}>
                     <Link to='/call' className="profile-link flex align-center gap">
                         <PhoneIcon />
                     </Link>

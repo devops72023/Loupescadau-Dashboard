@@ -10,7 +10,6 @@ export default function CallEstablished(){
     const { setPageName, setActiveItem, navState } = useContext(AppContext)
 
     const onPositionSelected = (position) => {
-        console.log("position");
     }
 
 

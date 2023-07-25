@@ -49,7 +49,17 @@ io.on("connection", socket => {
   //   from: Contain the socketID for the sender
   //   to: Contain the socketID for the receiver
   //   sdp: The session description for webrtc connection
-  // }
+  // }  
+
+  socket.on('call' , ({from, to}) => {
+    console.log('call from :' + from + ' to :' + to)
+    socket.to(to).emit('call' , {from});
+  });
+
+  socket.on('call-answer' , ({from, to, answer}) => {
+    console.log('answer call from :' + from + ' to :' + to + ' answer :' + answer)
+    socket.to(to).emit('call-answer' , {from, answer});
+  });
 
   socket.on('sdp' , ({from, to, sdp}) => {
       console.log('Sdp from :' + from + ' to :' + to + ' sdp : ' + sdp)
