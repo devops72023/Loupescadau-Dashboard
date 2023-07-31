@@ -17,7 +17,7 @@ function PositionPicker({ onPositionSelected, POSITION=null, className }) {
         .then( res => res.json())
         .then( res => {
           const loader = new Loader({
-            apiKey: "AIzaSyBLnA6f8CBY4swPh2K2RkBJch2hE922P_I",
+            apiKey: import.meta.env.VITE_API_KEY,
             version: "weekly",
             libraries: ["places"]
           });

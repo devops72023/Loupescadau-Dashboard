@@ -17,8 +17,8 @@ export default function AnswerCall(){
     }
     function denyCall(){
         if(callExist && !isAnswered){
-            setCallExist(false)
             socketObj.emit('call-answer', {from: currentUser._id, to: from, answer: "not_accepted"})
+            window.location.reload();
         }
     }
 

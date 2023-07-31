@@ -72,6 +72,10 @@ io.on("connection", socket => {
       socket.to(to).emit('candidate', {from, candidate});
   })
 
+  socket.on('end-call', ({to})=>{
+    socket.to(to).emit('end-call');
+  })
+
   socket.on("disconnect", async () => {
       console.log(" disconnected socket " + socket.id);
       await UsersModel.findOneAndUpdate({ socket: socket.id }, { $set: { socket: '' } }, { new: true })
@@ -113,19 +117,23 @@ app.use('/api/settings', settingRouter);
 app.use('/api/coupons', couponRouter);
 app.use('/api/orders', ordersRoute)
 app.use('/api/admin', adminRouter)
+app.get('/availableAdmin', async (req, res) =>{
+  const admin = await UsersModel.findOne({ socket: { $ne: ''}})
+  res.json({available: true, socket: admin.socket})
+})
 
 // Handles any requests that don't match the ones above
 // app.get('*', (req,res) =>{
 //   res.sendFile(path.join(__dirname+'/dist/index.html'));
 // });
 
-// app.use(
-//   '*', // Specify the endpoint in your Express server to proxy requests
-//   createProxyMiddleware({
-//     target: 'http://localhost:5173', // Specify the address of your Vite server
-//     changeOrigin: true,
-//     secure: false,
-//   })
-// );
+app.use(
+  '*', // Specify the endpoint in your Express server to proxy requests
+  createProxyMiddleware({
+    target: 'http://localhost:5173', // Specify the address of your Vite server
+    changeOrigin: true,
+    secure: false,
+  })
+);
 
-server.listen(8080, () => console.log('Server listening on port 3000'));
+server.listen(8080, () => console.log('Server listening on port 8080'));
