@@ -1,6 +1,6 @@
 import { Router } from "express"
 import { requireSignIn, isAuth, isAdmin } from './../Controllers/auth.js'
-import { qeuryAllUsers, findUserById, read, update, create, deleteUser, updateCurrentUser, updatePassword, deleteMultiple } from "../Controllers/users.js";
+import { qeuryAllUsers, findUserById, read, update, create, deleteUser, updateCurrentUser, updatePassword, deleteMultiple, updateUser } from "../Controllers/users.js";
 import { multerUsers } from "../Controllers/multer-config.js";
 
 const usersRoute = Router();
@@ -12,6 +12,7 @@ usersRoute.get('/:userId', requireSignIn, isAuth, read);
 usersRoute.put('/:userId', requireSignIn, isAuth, isAdmin, multerUsers.single('image'), update);
 usersRoute.put('/current-user/change-password/:userId', requireSignIn, isAuth, isAdmin, updatePassword);
 usersRoute.put('/current-user/:userId', requireSignIn, isAuth, isAdmin, multerUsers.single('image'), updateCurrentUser);
+usersRoute.put('/update/current-user', requireSignIn, isAuth, updateUser);
 usersRoute.delete('/:userId', requireSignIn, isAuth, isAdmin, deleteUser);
 usersRoute.delete('/:userId/multiple', requireSignIn, isAuth, isAdmin, deleteMultiple);
 

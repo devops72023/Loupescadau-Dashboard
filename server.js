@@ -92,6 +92,7 @@ import settingRouter from './Routes/Setting.js';
 import couponRouter from './Routes/Coupon.js';
 import ordersRoute from './Routes/Orders.js';
 import adminRouter from './Routes/Admin.js';
+import stripeRouter from './Routes/Stripe.js';
 
 // The cors middleware configuration.
 const corsOptions = {
@@ -108,7 +109,7 @@ app.use(Cors(corsOptions));
 app.use(express.static(path.join(__dirname, 'Assets')))
 app.use('/assets', express.static(path.join(__dirname, '/dist/assets')))
 
-
+app.use('/api/', stripeRouter)
 app.use('/api/auth', AuthRouter);
 app.use('/api/users', userRoute);
 app.use('/api/products', productsRouter);

@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema({
     },
     location: {
         type: String,
-        trim: true
+        default: '',
     },
     salt: String,
     role: {

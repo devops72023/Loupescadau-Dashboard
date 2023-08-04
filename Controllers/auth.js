@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import User from './../Models/user.js';
 import errorHandler from './../helpers/dbErrorHandler.js';
 
-const signIn = async (req, res) => {
+const signAdminIn = async (req, res) => {
 
   const { email, password } = req.body;
   const user = await User.findOne({ email });
@@ -34,6 +34,70 @@ const signIn = async (req, res) => {
   }
 };
 
+const signUserIn = async (req, res) => {
+
+  const { email, password } = req.body;
+  const user = await User.findOne({ email });
+  
+  if (!user) {
+    return res.status(200).json({
+      type:'email',
+      message: "Invalide email address.",
+    });
+  } else {
+    if (!user.authenticate(password)) {
+      return res.status(200).json({
+        type:'password',
+        message: "Le mot de passe incorrect.",
+      });
+    }
+
+    const token = jwt.sign({ _id: user.id }, process.env.JWT_SECRET);
+
+    return res.json({
+      accessToken: token,
+    });
+  }
+};
+
+const registerUser = async (req, res) => {
+  try {
+    const { email, password, name } = req.body;
+    if (!name || name.length < 4 || name.length > 30 ) {
+      return res.status(200).json({
+        type:'name',
+        message: "Le nom doit être entre 4 et 30 characters",
+      });
+    }
+    const user = await User.findOne({ email });
+    if (user) {
+      return res.status(200).json({
+        type:'email',
+        message: "Address email est deja existe.",
+      });
+    }
+    if (!password || password.length < 6 || password.length > 30 ) {
+      return res.status(200).json({
+        type:'password',
+        message: "Le mot de passe doit être entre 6 et 30 characters",
+      });
+    }
+
+    const new_user = new User({ name, email });
+    new_user.password = password
+    await new_user.save();
+    new_user.hashed_password = '';
+    new_user.salt = '';
+    return res.json({
+      type: 'success',
+      message: 'Votre account est crée avec succès',
+      user: new_user
+    });
+  } catch (error) {
+    return res.status(500).json({type: 'error', message: error.message});
+  }
+};
+
 
 const requireSignIn = async function authMiddlware(req, res, next) {
   try {
@@ -46,6 +110,8 @@ const requireSignIn = async function authMiddlware(req, res, next) {
       const foundUser = await User.findOne({ _id: userId });
 
       if (foundUser) {
+        foundUser.hashed_password = '';
+        foundUser.salt = '';
         req.data = foundUser;
         next();
       } else {
@@ -87,4 +153,4 @@ const isAdmin = (req, res, next) => {
   next();
 };
 
-export { signIn, requireSignIn, isAuth, isAdmin };
+export { signAdminIn, signUserIn, registerUser, requireSignIn, isAuth, isAdmin };

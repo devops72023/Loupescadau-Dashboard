@@ -69,6 +69,38 @@ const update = async (req, res) => {
   }
 };
 
+const updateUser = async (req, res) => {
+  try {
+    const { _id, name, phone, address, about } = req.body;
+    console.log(address)
+    if (!name || name.length < 4 || name.length > 30 ) {
+      return res.status(200).json({
+        type:'error',
+        message: "Le nom doit être entre 4 et 30 characters",
+      });
+    }
+    const user = await User.findOne({ _id });
+    if (!user) {
+      return res.status(200).json({
+        type:'error',
+        message: "L'utilisateur est introuvable",
+      });
+    }
+    const reg = /^\+?(\d{1,3})?-?(\d{3})?-?\d{3}-?\d{4}$/;
+    if (!reg.test(phone)) {
+      return res.status(200).json({
+        type:'error',
+        message: "Le numero de telephone est incorrect.",
+      });
+    }
+    const upd_user = await User.findOneAndUpdate({ _id },{ name, location: address, phone, about },{ new: true })
+    return res.status(200).json({type:'success', message: "Les données sont modifier avec succes.", user: upd_user});
+
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({'type': 'error', 'message': error.message});
+  }
+};
 
 const updateCurrentUser = async (req, res) => {
   let USER = { 
@@ -172,4 +204,15 @@ async function deleteMultiple(req, res){
   }
 }
 
-export { qeuryAllUsers, findUserById, read, update, create, deleteUser, updateCurrentUser, updatePassword, deleteMultiple }
+export { 
+  qeuryAllUsers, 
+  findUserById, 
+  read, 
+  update, 
+  create, 
+  deleteUser, 
+  updateCurrentUser, 
+  updatePassword, 
+  deleteMultiple,
+  updateUser,
+}
