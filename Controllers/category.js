@@ -1,5 +1,6 @@
 import Category from '../Models/category.js';
 import errorHandler from './../helpers/dbErrorHandler.js';
+import Product from './../Models/product.js';
 
 const findCategoryById = async (req, res, next, id) => {
     const category = await Category.findById(id);
@@ -114,6 +115,7 @@ const remove = async (req, res) => {
       });
     }
 };
+
 async function deleteMultiple(req, res){
   try {
     let cat = req.body;
@@ -125,4 +127,30 @@ async function deleteMultiple(req, res){
   }
 }
 
-export { create, read, list, update, remove, findCategoryById, deleteMultiple }
+const productsByCategory = async (req, res) => {
+  try {
+    const category = req.category;
+    const products = await Product.find({category: category._id});
+    return res.json({products});
+  } catch (error) {
+    return res.status(200).json({'error': "Something went wrong while fetching data" + error.message});
+  }
+}
+const productByName = async (req, res) => {
+  try {
+    const { name } = req.body;
+    const { category } = req
+    let query;
+    if (name.length > 0) {
+      query = { category: category._id, title: { $regex: name, $options: 'i' } }
+    }else{
+      query = { category: category._id }
+    }
+    const products = await Product.find(query);
+    res.json({products})
+  } catch (error) {
+    res.status(500).json({'error': "Something went wrong while fetching products " + error.message});
+  }
+}
+
+export { create, read, list, update, remove, findCategoryById, deleteMultiple, productsByCategory, productByName }
