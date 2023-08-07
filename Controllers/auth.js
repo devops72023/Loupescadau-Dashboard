@@ -53,9 +53,12 @@ const signUserIn = async (req, res) => {
     }
 
     const token = jwt.sign({ _id: user.id }, process.env.JWT_SECRET);
+    user.hashed_password = '';
+    user.salt = '';
 
     return res.json({
       accessToken: token,
+      user: user
     });
   }
 };
