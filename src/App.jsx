@@ -67,6 +67,7 @@ const AppProvider = (props) => {
     setSocketObj(socket)
     socket.emit('connection-success', {adminId: props.currentUser._id})
     socket.on('call' , ({from}) => {
+      console.log("Calling...")
       setCallExist(true);
       setFrom(from)
     });

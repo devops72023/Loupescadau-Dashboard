@@ -125,14 +125,14 @@ app.use("/api/orders", ordersRoute);
 app.use("/api/admin", adminRouter);
 app.get("/api/availableAdmin", async (req, res) => {
   try {
-    const admin = await User.findOne({ socket: { $ne: "" } });
+    const admin = await UsersModel.findOne({ socket: { $ne: "" } });
     if (admin.socket) {
       res.status(200).json({ available: true, socket: admin.socket });
     } else {
       res.status(200).json({ available: false });
     }
   } catch (error) {
-    res.status(200).json({ available: false });
+    res.status(200).json({ available: false, error: error.message });
   }
 });
 

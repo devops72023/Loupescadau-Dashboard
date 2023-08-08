@@ -190,11 +190,11 @@ const VideoCall = () => {
       <div className="absolute flex justify-center items-center gap-2 bottom-0 w-full py-2 bg-colors-blue bg-opacity-20 backdrop-blur-lg">
         <MicrophoneIcon
           onClick={stopAudio}
-          className="w-14 h-14 p-4 cursor-pointer rounded-full fill-colors-blue bg-colors-light bg-opacity-50 transition-all hover:bg-light"
+          className={`w-14 h-14 p-4 cursor-pointer rounded-full ${isAudioOpen ? 'fill-colors-blue bg-colors-light bg-opacity-50' : 'fill-colors-light bg-colors-blue' } transition-all hover:bg-light`}
         />
         <CameraIcon
           onClick={stopCamera}
-          className="w-14 h-14 p-4 cursor-pointer rounded-full fill-colors-blue bg-colors-light bg-opacity-50 transition-all hover:bg-light"
+          className={`w-14 h-14 p-4 cursor-pointer rounded-full ${isCameraOpen ? 'fill-colors-blue bg-colors-light bg-opacity-50' : 'fill-colors-light bg-colors-blue' } transition-all hover:bg-light`}
         />
         <PhoneIcon
           onClick={endCall}
