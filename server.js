@@ -138,17 +138,17 @@ app.get("/api/availableAdmin", async (req, res) => {
 });
 
 // Handles any requests that don't match the ones above
-// app.get('*', (req,res) =>{
-//   res.sendFile(path.join(__dirname+'/dist/index.html'));
-// });
+app.get('*', (req,res) =>{
+  res.sendFile(path.join(__dirname+'/dist/index.html'));
+});
 
-app.use(
-  "*", // Specify the endpoint in your Express server to proxy requests
-  createProxyMiddleware({
-    target: "http://localhost:5173", // Specify the address of your Vite server
-    changeOrigin: true,
-    secure: false,
-  })
-);
+// app.use(
+//   "*", // Specify the endpoint in your Express server to proxy requests
+//   createProxyMiddleware({
+//     target: "http://localhost:5173", // Specify the address of your Vite server
+//     changeOrigin: true,
+//     secure: false,
+//   })
+// );
 
 server.listen(8080, () => console.log("Server listening on port 8080"));
