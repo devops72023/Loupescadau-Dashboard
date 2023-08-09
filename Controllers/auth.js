@@ -52,7 +52,7 @@ const signUserIn = async (req, res) => {
       });
     }
 
-    const token = jwt.sign({ _id: user.id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
     user.hashed_password = '';
     user.salt = '';
 

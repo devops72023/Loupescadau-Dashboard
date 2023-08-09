@@ -73,7 +73,6 @@ const Status = ({ current, orderId }) => {
 const Row = (props) => {
     const [ checked, setChecked ] = useState(false);
     const [ trashClicked, setTrashClicked ] = useState(false);
-    console.log(props.products)
 
     function handleChange(e){
         setChecked(!checked);
@@ -143,11 +142,11 @@ const Row = (props) => {
     }, [checked])
     return (
         <tr>
-            <td><input type="checkbox" name="one" id="one" checked={ checked ? 'checked' : '' } onChange={handleChange} /></td>
+            <td><input type="checkbox" name="one" id="one" checked={ checked ? 'checked' : '' } disabled={true} className='!cursor-not-allowed' onChange={handleChange} /></td>
             <td>{ props.user?.name }</td>
             <td className='one-line'>{ props.products?.map(item=>{
                 const product = item.product
-                return product.title + "; "
+                return product?.title + "; "
             }) }</td>
             <td>{ props.amount }</td>
             <td><Status current={ props.status } orderId={props._id} /></td>
@@ -184,7 +183,6 @@ export default function Orders (){
         .then(async res => {
             if (res.status === 200){
                 const response = await res.json();
-                console.log(response);
                 setOrders(response);
             }
         })

@@ -1,22 +1,12 @@
 import User from "../Models/user.js";
 import CryptoJS from 'crypto-js';
 import { v4 as uuidv4 } from 'uuid';
+import Order from "../Models/orders.js";
 
 
 
 const qeuryAllUsers = async (req, res) => {
     try{
-        // let arr = [];
-        // for(let i =0; i<20; i++){
-        //   const user = {
-        //     name:  `User ${i}`,
-        //     email: `user${i}@gmail.com`,
-        //     salt:'ff3973ec-28b4-4046-9564-91c925646b04',
-        //     hashed_password: '97267c103e95b99d89e828ad53d02814ba44e317'
-        //   };
-        //   arr.push(new User(user))
-        // }
-        // console.log(arr)
         const users = await User.find();
         res.status(200).json(users);
     }catch(err){
@@ -204,6 +194,24 @@ async function deleteMultiple(req, res){
   }
 }
 
+const getOrders = async (req, res) => {
+  try {
+    let orders = await Order.find({
+      user : req.data._id,
+    }).populate({
+        path: 'products',
+        populate: {
+          path: 'product',
+          model: 'Product',
+        },
+      }).populate('user').sort({ createdAt : 'desc' });
+  
+    res.json({ orders })
+  } catch (error) {
+    return res.status(400).json({error: error.message});
+  }
+};
+
 export { 
   qeuryAllUsers, 
   findUserById, 
@@ -215,4 +223,5 @@ export {
   updatePassword, 
   deleteMultiple,
   updateUser,
+  getOrders
 }
