@@ -61,20 +61,21 @@ io.on("connection", (socket) => {
   });
 
   socket.on("sdp", ({ from, to, sdp }) => {
-    console.log("Sdp from :" + from + " to :" + to + " sdp : " + sdp);
+    // console.log("Sdp from :" + from + " to :" + to + " sdp : " + sdp);
     socket.to(to).emit("sdp", { from, sdp });
   });
 
   socket.on("candidate", ({ from, to, candidate }) => {
     // console.log(" outside candidate", candidate);
-    console.log(
-      "Candidate from :" + from + " to :" + to + " candidate :",
-      candidate
-    );
+    // console.log(
+    //   "Candidate from :" + from + " to :" + to + " candidate :",
+    //   candidate
+    // );
     socket.to(to).emit("candidate", { from, candidate });
   });
 
   socket.on("end-call", ({ to }) => {
+    console.log("End Call to :" + to )
     socket.to(to).emit("end-call");
   });
 
@@ -112,7 +113,7 @@ const __dirname = path.dirname(__filename);
 app.use(express.json());
 app.use(Cors(corsOptions));
 app.use(express.static(path.join(__dirname, "Assets")));
-app.use("/assets", express.static(path.join(__dirname, "/dist/assets")));
+app.use("/src/assets", express.static(path.join(__dirname, "/dist/assets")));
 
 app.use("/api/", stripeRouter);
 app.use("/api/auth", AuthRouter);

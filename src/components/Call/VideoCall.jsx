@@ -60,6 +60,7 @@ const VideoCall = () => {
   }
   async function endCall() {
     peer.current.close();
+    peer.current = null;
     streamRef.current.getTracks().forEach((track) => track.stop());
     local.current.srcObject = null;
     remote.current.srcObject = null;
