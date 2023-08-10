@@ -64,7 +64,8 @@ const VideoCall = () => {
     streamRef.current.getTracks().forEach((track) => track.stop());
     local.current.srcObject = null;
     remote.current.srcObject = null;
-    socket.emit("end-call", { from: socket.id });
+    socket.emit("end-call", { to: from });
+    location.reload();
   }
 
   function stopAudio() {

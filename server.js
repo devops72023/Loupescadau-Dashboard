@@ -48,8 +48,9 @@ io.on("connection", (socket) => {
   //   sdp: The session description for webrtc connection
   // }
 
-  socket.on("call", ({ from, to }) => {
+  socket.on("call", ({ from, to, user_id }) => {
     console.log("call from :" + from + " to :" + to);
+    if (user)
     socket.to(to).emit("call", { from });
   });
 
