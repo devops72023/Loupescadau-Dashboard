@@ -38,6 +38,7 @@ const AppProvider = (props) => {
   const [ isAnswered, setIsAnswered ] = useState(false)
   const [ socketObj, setSocketObj ] = useState('')
   const [ from, setFrom ] = useState({});
+  const [ user_id , setUser_id ] = useState('')
 
   const state = {
     pageName: pageName,
@@ -60,15 +61,17 @@ const AppProvider = (props) => {
     from: from,
     setFrom: setFrom,
     settings: props.settings,
-    setSettings: props.setSettings
+    setSettings: props.setSettings,
+    user_id, setUser_id
   }
 
   useEffect(() => {
     setSocketObj(socket)
     socket.emit('connection-success', {adminId: props.currentUser._id})
-    socket.on('call' , ({from}) => {
-      console.log("Calling...")
+    socket.on('call' , ({from, user_id}) => {
+      console.log(user_id)
       setCallExist(true);
+      setUser_id(user_id)
       setFrom(from)
     });
   }, []);

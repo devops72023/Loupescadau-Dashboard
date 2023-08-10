@@ -50,8 +50,7 @@ io.on("connection", (socket) => {
 
   socket.on("call", ({ from, to, user_id }) => {
     console.log("call from :" + from + " to :" + to);
-    if (user)
-    socket.to(to).emit("call", { from });
+    socket.to(to).emit("call", { from, user_id });
   });
 
   socket.on("call-answer", ({ from, to, answer }) => {
