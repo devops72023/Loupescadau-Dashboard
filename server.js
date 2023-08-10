@@ -99,6 +99,7 @@ import couponRouter from "./Routes/Coupon.js";
 import ordersRoute from "./Routes/Orders.js";
 import adminRouter from "./Routes/Admin.js";
 import stripeRouter from "./Routes/Stripe.js";
+import webhook from "./Routes/webhook.js";
 
 // The cors middleware configuration.
 const corsOptions = {
@@ -109,6 +110,8 @@ const corsOptions = {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+app.post('/api/webhook', webhook)
 
 app.use(express.json());
 app.use(Cors(corsOptions));
@@ -138,9 +141,9 @@ app.get("/api/availableAdmin", async (req, res) => {
 });
 
 // Handles any requests that don't match the ones above
-app.get('*', (req,res) =>{
-  res.sendFile(path.join(__dirname+'/dist/index.html'));
-});
+// app.get('*', (req,res) =>{
+//   res.sendFile(path.join(__dirname+'/dist/index.html'));
+// });
 
 // app.use(
 //   "*", // Specify the endpoint in your Express server to proxy requests

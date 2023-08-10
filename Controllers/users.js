@@ -200,6 +200,7 @@ const getOrders = async (req, res) => {
       user : req.data._id,
     }).populate({
         path: 'products',
+        model: 'CartItem',
         populate: {
           path: 'product',
           model: 'Product',

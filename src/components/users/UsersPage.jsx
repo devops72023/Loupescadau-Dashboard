@@ -84,7 +84,6 @@ const Row = (props) => {
             <td className='one-line'>{ props.email }</td>
             <td className='one-line'>{ props.about }</td>
             <td>{ props.role == 1 ? "Admin" : "User" }</td>
-            <td>{ props.history }</td>
             <td className='actions'>
                 <div className="action-links">
                     <Link to={`update-user/${props._id}`}>
@@ -214,9 +213,6 @@ export default function UsersPage(props){
                                         </th>
                                         <th>
                                             <div className="th-label">Rôle</div>
-                                        </th>
-                                        <th>
-                                            <div className="th-label">Historique</div>
                                         </th>
                                         <th>
                                             <div className="th-label">Actions</div>
