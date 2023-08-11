@@ -49,33 +49,28 @@ io.on("connection", (socket) => {
   // }
 
   socket.on("call", ({ from, to, user_id }) => {
-    console.log("call from :" + from + " to :" + to);
     socket.to(to).emit("call", { from, user_id });
   });
 
   socket.on("call-answer", ({ from, to, answer }) => {
-    console.log(
-      "answer call from :" + from + " to :" + to + " answer :" + answer
-    );
     socket.to(to).emit("call-answer", { from, answer });
   });
 
   socket.on("sdp", ({ from, to, sdp }) => {
-    // console.log("Sdp from :" + from + " to :" + to + " sdp : " + sdp);
     socket.to(to).emit("sdp", { from, sdp });
   });
 
   socket.on("candidate", ({ from, to, candidate }) => {
-    // console.log(" outside candidate", candidate);
-    // console.log(
-    //   "Candidate from :" + from + " to :" + to + " candidate :",
-    //   candidate
-    // );
     socket.to(to).emit("candidate", { from, candidate });
   });
 
+  // The chat events:
+  socket.on("message", ({ from, to, message})=>{
+    console.log("message from: ", from + ", to: ", to + ", message: ", message);
+    socket.to(to).emit("message", { from, message });
+  })
+
   socket.on("end-call", ({ to }) => {
-    console.log("End Call to :" + to )
     socket.to(to).emit("end-call");
   });
 
