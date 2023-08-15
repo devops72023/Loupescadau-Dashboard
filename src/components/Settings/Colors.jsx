@@ -15,11 +15,6 @@ export default function Colors(props){
     const [ mainColor, setMainColor ] = useState('')
     const [ secondaryColor, setSecondaryColor ] = useState('')
     const [ textColor, setTextColor ] = useState('')
-    
-    const [iconName, setIconName] = useState('Choisir une image');
-    const [icon, setIcon] = useState(null);
-    const iconInput = useRef(null)
-    const iconImage = useRef(null)
 
     const [logoName, setLogoName ] = useState('Choisir une image');
     const [logo, setLogo] = useState(null);
@@ -61,7 +56,6 @@ export default function Colors(props){
         formData.append('maincolor', mainColor);
         formData.append('secondarycolor', secondaryColor);
         formData.append('textcolor', textColor)
-        if ( icon != null ) formData.append( 'favicon', icon );
         if ( logo != null ) formData.append( 'logo', logo );
         
         let toastId = toast.dark(<SpinningToast />, { autoClose: false, hideProgressBar: true, theme: 'light' });
@@ -114,17 +108,15 @@ export default function Colors(props){
         })
         .then( res => res.json())
         .then( res => {
-            console.log(res)
             setMainColor(res.maincolor);
             setSecondaryColor(res.secondarycolor);
             setTextColor(res.textcolor)
-            setIconName(res.favicon)
             setLogoName(res.logo)
         })
         .catch(err => {
             let toastId = toast.dark(<SpinningToast />, { autoClose: false, hideProgressBar: true, theme: 'light' });
             toast.update(toastId, {
-                render: err.error,
+                render: err.message,
                 type: 'error',
                 theme: 'light',
                 position: toast.POSITION.TOP_RIGHT,
@@ -209,24 +201,6 @@ export default function Colors(props){
                                 </div>
                             </div>
                             <div className="col">
-                                
-                                <div className="form-group">
-                                    <label htmlFor="img">Importer une icon</label>
-                                    <button 
-                                        type='button'
-                                        className='fileButton'
-                                        onClick={handleIconButtonClick}
-                                    >
-                                        <span>{ iconName } <ImageImportIcon /></span>
-                                        <img ref={iconImage} src={`${ import.meta.env.VITE_ASSETS }favicon/${iconName}`} alt="" />
-                                    </button>
-                                    <input 
-                                        type="file"
-                                        id='img'
-                                        style={{ display: 'none' }} 
-                                        ref={iconInput}
-                                        onChange={handleIconImport}/>
-                                </div>
                                 <div className="form-group">
                                     <label htmlFor="img">Importer un logo</label>
                                     <button 

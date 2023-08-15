@@ -110,7 +110,7 @@ export default function AddProduct(props){
                 console.log(res)
                 if ( res.error ) {
                     toast.update(toastId, {
-                        render: "Une erreur s'est produite",
+                        render: res.error,
                         type: 'error',
                         theme: 'light',
                         position: toast.POSITION.TOP_RIGHT,
