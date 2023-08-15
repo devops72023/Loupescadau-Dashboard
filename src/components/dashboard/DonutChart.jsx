@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Card, Title, Select, SelectItem, DonutChart, Flex } from "@tremor/react";
-import { set } from "mongoose";
 
 const DonutCard = ()=>{
     const [ selectedMonth, setSelectedMonth ] = useState(new Date().getMonth() + 1);

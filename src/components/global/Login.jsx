@@ -1,5 +1,4 @@
 import React, { useState, useContext, useEffect } from 'react';
-import logo from '/Assets/images/logo.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { AppContext } from '../../App';
 
@@ -68,7 +67,7 @@ export default function Login(props){
     return (
         <div className="login-container">
             <div className="logo">
-                <img src={ logo } />
+                <img src={import.meta.env.VITE_ASSETS+`images/logo.png`} />
             </div>
             <h2>ADMINISTRATEUR</h2>
             <h3>CONNEXION</h3>

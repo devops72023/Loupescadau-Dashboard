@@ -1,9 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Howl } from 'howler';
-
-import logo from '/Assets/images/logo.png';
-import { Link, useLocation } from 'react-router-dom'
-import callRing from '/Assets/audios/call-ring.mp3'
+import { Link, useLocation } from 'react-router-dom';
 import {  ProfileIcon, CategoryIcon, DashboardIcon, LogoutIcon, ProductsIcon, SettingIcon, UsersIcon, PhoneIcon, OrdersIcon} from './Icons';
 
 import '/src/assets/styles/Navigation.css'
@@ -36,7 +32,7 @@ const Navigation = (props) => {
                 {
                     callExist 
                     ? !isAnswered 
-                        ? <audio src={callRing} autoPlay loop className="hidden"></audio> 
+                        ? <audio src={import.meta.env.VITE_ASSETS+`audios/call-ring.mp3`}  autoPlay loop className="hidden"></audio> 
                         : ''
                     : ''
                 }
@@ -46,7 +42,7 @@ const Navigation = (props) => {
                         <span></span>
                 </button>
                 <Link to='/' className="header-logo">
-                    <img src={ logo } alt="Louoescadau log" />
+                    <img src={import.meta.env.VITE_ASSETS+`images/logo.png`}  alt="Louoescadau log" />
                 </Link>
                 <h3 className="page-title">
                     <span className='circle'></span>

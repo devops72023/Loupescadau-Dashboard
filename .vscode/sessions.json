@@ -13,12 +13,6 @@
             " npm run dev \n"
           ]
         },
-        {
-          "name": "backend",
-          "commands": [
-            " npm run server \n"
-          ]
-        }
       ]
     ]
   }
