@@ -30,8 +30,21 @@ const Row = (props) => {
         })
         .then(res => res.json())
         .then(res => {
-            console.log(res);
             props.setUsers(res.users);
+            if(res.error){
+                toast.update(toastId, {
+                    render: res.error,
+                    type: 'error',
+                    theme: 'light',
+                    position: toast.POSITION.TOP_RIGHT,
+                    autoClose: 3000, // Close the alert after 3 seconds
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+                return ;
+            }
             toast.update(toastId, {
                 render: 'L\'utilisateur été suprimé avec succès!',
                 type: 'success',
@@ -125,6 +138,20 @@ export default function UsersPage(props){
         .then(res => res.json())
         .then(res => {
             setUsers(res.users);
+            if(res.error){
+                toast.update(toastId, {
+                    render: res.error,
+                    type: 'error',
+                    theme: 'light',
+                    position: toast.POSITION.TOP_RIGHT,
+                    autoClose: 3000, // Close the alert after 3 seconds
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+                return ;
+            }
             toast.update(toastId, {
                 render: 'Les utilisateurs ont été suprimés avec succès!',
                 type: 'success',
